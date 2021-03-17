@@ -35,13 +35,16 @@ class Agent():
         self.action_size = action_size
         self.seed = random.seed(seed)
         print("Building new agent")
+
         # Q-Network
+        #here I figured a state_size x action_size would create enough nodes to properly associate actions with states 
         self.qnetwork_local = QNetwork(state_size, action_size, [state_size*action_size, state_size*action_size], seed).to(device)
         self.qnetwork_target = QNetwork(state_size, action_size, [state_size*action_size, state_size*action_size], seed).to(device)
         self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=LR)
 
         # Replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
+
         # Initialize time step (for updating every UPDATE_EVERY steps)
         self.t_step = 0
     
@@ -87,9 +90,9 @@ class Agent():
         """
         states, actions, rewards, next_states, dones = experiences
 
-        ## TODO: compute and minimize the loss
         non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                           experiences[3]))).byte()
+
         non_final_next_states = torch.cat([s for s in experiences[3]
                                                 if s is not None])
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
@@ -129,9 +132,11 @@ class Agent():
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
     
     def save_checkpoint(self):
+        """Save checkpoint by technique, used for differentiating between techniques used"""
         torch.save(self.qnetwork_local.state_dict(), self.technique + '_checkpoint.pth')
 
     def load_checkpoint(self):
+        """Load checkpoint model by technique, used for differentiating between techniques to run"""
         self.qnetwork_local.load_state_dict(torch.load(self.technique + '_checkpoint.pth'))
 
 class ReplayBuffer:

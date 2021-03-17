@@ -19,17 +19,14 @@ def show_env(env, brain):
     print('States look like:', state)
     state_size = len(state)
     print('States have length:', state_size)
-    lowList = np.zeros(len(state), dtype=float)
-    print(lowList)
-    highList = np.ones(len(state), dtype=float)
-    print(highList)
-    bins = np.ones(len(state), dtype=int)*10
-    uniformGrid = create_uniform_grid(lowList, highList, bins)
-    print(uniformGrid)
-    print(discretize(state, uniformGrid))
-    print(prefill_state(env, 4))
 
 def show_score_plot(scores):
+    """Show score plot
+    
+    Params
+    ======
+        scores (array of int): scores for each episode run
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.plot(np.arange(len(scores)), scores)
@@ -51,25 +48,36 @@ def train_agent( env, agent, solved_score=200.0, n_episodes=2000, max_t=10000, e
     scores = []                        # list containing scores from each episode
     scores_window = deque(maxlen=100)  # last 100 scores
     eps = eps_start                    # initialize epsilon
+
     for i_episode in range(1, n_episodes+1):
+        #prefill our initial state with the same four actions, this might not be optimal based on how bananas spawn, but shouldn't have an impact 
+        #on the final model behavior since these actions should still fill the state action value function with some data
         state = prefill_state(env, 4)
         score = 0
         while True:
+            #use epsilon greedy policy to determine an appropriate action
             action = agent.act(state, eps)
+
+            #get the current state of our environment after taking our action
             observation = env.step(action.astype(int))
 
+            #shift state vector to fill last values with the new state observed
             next_state = np.copy(state)
             next_state = next_state[37:]
             next_state = np.concatenate((next_state,preprocess_state(observation[env.brain_names[0]].vector_observations[0])), axis=None)
 
+            #gather reward and whether our current episode is finished
             reward = observation[env.brain_names[0]].rewards[0]
             done = observation[env.brain_names[0]].local_done[0]
-            #next_state, reward, done, _ = env.step(action)
+
+            #update our agent
             agent.step(state, action, reward, next_state, done)
+
             state = next_state
             score += reward
             if done:
                 break 
+        
         scores_window.append(score)       # save most recent score
         scores.append(score)              # save most recent score
         eps = max(eps_end, eps_decay*eps) # decrease epsilon
@@ -83,6 +91,13 @@ def train_agent( env, agent, solved_score=200.0, n_episodes=2000, max_t=10000, e
     return scores
 
 def prefill_state(env, size):
+    """Prefill state
+    
+    Params
+    ======
+        env (unity environment): our current environment
+        size (int): number of states to prefill into our wide state array
+    """
     wide_state = np.empty(0)
     wide_state = np.concatenate((wide_state,preprocess_state(env.reset()[env.brain_names[0]].vector_observations[0])), axis=None)
     for i in range(1, size):
@@ -90,6 +105,14 @@ def prefill_state(env, size):
     return wide_state
 
 def run_agent(env, agent, brain_name):
+    """Run Agent
+    
+    Params
+    ======
+        env (unity environment): our current environment
+        agent (Agent): initialized agent we'd like to run in our environment
+        brain_name (string): key for brain that our agent represents in the unity environment
+    """
     agent.load_checkpoint()
     env_info = env.reset(train_mode=False)[brain_name] # reset the environment
     state = prefill_state(env, 4)            # get the current state

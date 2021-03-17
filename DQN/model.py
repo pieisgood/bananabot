@@ -16,7 +16,6 @@ class QNetwork(nn.Module):
         super(QNetwork, self).__init__()
         self.seed = torch.manual_seed(seed)
         # Hyperparameters for our network
-        # hidden_sizes = [64, 64]
         self.fcl1 = nn.Linear(int(state_size), hidden_sizes[0])
         self.relu1 = nn.ReLU()
         self.fcl2 = nn.Linear(hidden_sizes[0], hidden_sizes[1])

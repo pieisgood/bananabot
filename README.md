@@ -1,6 +1,9 @@
 # bananabot
 A bot for collecting yellow bananas in a unity environment
 
+# DQN Agent running in environment
+![](DQN_Agent_Running.gif)
+
 Describe what environment we are in, then describe the state space, actions space and whether this is episodic or not.
 
 Describe how to install all the crap needed to run this thing
