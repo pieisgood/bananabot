@@ -30,7 +30,7 @@ class Agent():
             action_size (int): dimension of each action
             seed (int): random seed
         """
-        self.technique = "dqn"
+        self.technique = "dqn_prioritized_replay"
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(seed)
@@ -89,15 +89,16 @@ class Agent():
             gamma (float): discount factor
         """
         states, actions, rewards, next_states, dones = experiences
-
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
         # columns of actions taken. These are the actions which would've been taken
         # for each batch state according to policy_net
+
         state_action_values = self.qnetwork_local(states).gather(1, actions)
         Q_targets_next = self.qnetwork_target(next_states).detach().max(1)[0].unsqueeze(1)
         # Compute Q targets for current states 
         Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
 
+        # Compute Huber loss
         loss = F.smooth_l1_loss(state_action_values, Q_targets)
 
         # Optimize the model
