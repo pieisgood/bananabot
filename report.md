@@ -7,7 +7,21 @@ The DQN Algorithm uses a neural network to approximate the action value function
 
 The state of the system has been descritized into 45 segments, since the environment provides what I think are vectors towards bananas and a color state then breaking down the vector into values that divide evenly into 360 degrees seemed rational (I could have done something closer to descritizing for radians but oh well). I figured this would add enough granularity to assign reward properly without limiting the state too much that the agent could differentiate between two bananas somewhat close together.
 
-The value of the state input into our Agent is an ordered array of 4 game states. The idea is to use this larger state space to prevent over valuing actions that avoid blue bananas that could have groups of yellow bananas behind them. Action size is simply the actions we can take in the current state, which is 0,1,2,3 representing moving up, down, turn left and turn right. The neural networks both have the same state and action sizes as well as the same hidden layer sizes. The hidden layer sizes were created as a the state size multiplied by the action size in order to represent, at least, the mapping of the state - action permutation , which I believed would be able to adequetly hold enough information to approximate the action value function without being prohibitevly large (my pc only has so much memory and other choices did crash the training segment due to OOM errors).
+The value of the state input into our Agent is an ordered array of 4 game states. The idea is to use this larger state space to prevent over valuing actions that avoid blue bananas that could have groups of yellow bananas behind them. Action size is simply the actions we can take in the current state, which is 0,1,2,3 representing moving up, down, turn left and turn right. The neural networks both have the same state and action sizes as well as the same hidden layer sizes. The hidden layer sizes were created as a the state size multiplied by the action size in order to represent, at least, the mapping of the state - action permutation , which I believed would be able to adequetly hold enough information to approximate the action value function without being prohibitevly large (my pc only has so much memory and other choices did crash the training segment due to OOM errors). 
+
+Hyper paramters used:
+BUFFER_SIZE = int(1e5)  # replay buffer size
+BATCH_SIZE = 96         # minibatch size
+GAMMA = 0.95            # discount factor
+TAU = 1e-3              # for soft update of target parameters
+LR = 5e-4               # learning rate 
+UPDATE_EVERY = 4        # how often to update the network
+
+Reducing the Gamma helped reduce the impact of previous poor decisions when training the agent.
+
+The neural network had 4 layers. An input layer the width of our state, two hidden layers the width of our state multiplied by the width of our action space and a final output layer the width of our action space. Each layer uses the ReLU (Rectified Linear Unit) activation function. I did not experiment with any other activiation functions.
+
+
 
 Below in the reward graph as well as the N episode reward averages. As well as the reward of a single run of the agent.
 ![](environment-reward-graph.png)

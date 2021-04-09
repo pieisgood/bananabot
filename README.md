@@ -10,9 +10,18 @@ The agent is dropped into an environment on a flat plane that has randomly spawn
 
 # Installation
 In order to get a working environment for our agent first we will install Anaconda3 - [https://www.anaconda.com/products/individual]
+
 Install python 3.6.x using anaconda3 prompt by typing in `conda create --name unity-agents python=3.6`
+
 Install the Unity game engine [https://store.unity.com/download]
 Install the Unityagents package within Unity [https://github.com/Unity-Technologies/ml-agents/blob/main/docs/Installation.md]
+Install the banana environment for which we are training our agent 
+    Linux: [https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Linux.zip]
+    Mac OSX: [https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana.app.zip]
+    Windows (32-bit): [https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86.zip]
+    Windows (64-bit): [https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86_64.zip]
+Download the file according to your operating system and unzip the file where you like, you will then need to update the bananabot.ipynb to point to the 'banana.app' file on your machine.
+
 Install pytorch 1.7.1 inside out unity-agents anaconda environment `conda install pytorch=1.7.1`
 
 # Training and Running our Agent
